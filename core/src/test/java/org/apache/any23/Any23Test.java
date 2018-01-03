@@ -72,6 +72,7 @@ import static org.apache.any23.extractor.ExtractionParameters.ValidationMode;
  * 
  * @author Davide Palmisano ( dpalmisano@gmail.com )
  * @author Michele Mostarda ( michele.mostarda@gmail.com )
+ * @author Jacek Grzebyta ( jgrzebyta@apache.org )
  */
 @SuppressWarnings("unchecked")
 public class Any23Test extends Any23OnlineTestBase {
@@ -83,14 +84,26 @@ public class Any23Test extends Any23OnlineTestBase {
     private static final Logger logger = LoggerFactory
             .getLogger(Any23Test.class);
 
+    /**
+     * {@code @base} directive.
+     * 
+     * According to <a href="https://www.w3.org/TR/turtle/#relative-iri"> Turtle 1.1 documentation</a>
+     * {@code @base} directive is only applied for the relative IRI such as {@code <#a>}.
+     * 
+     * @throws Exception 
+     */
     @Test
     public void testTTLDetection() throws Exception {
-        assertDetection("<a> <b> <c> .", "rdf-turtle");
+        assertDetection("<#a> <#b> <#c> .", "rdf-turtle");
     }
 
+    /**
+     * @see Any23Test#testTTLDetection() 
+     * @throws Exception 
+     */
     @Test
     public void testN3Detection1() throws Exception {
-        assertDetection("<Bob><brothers>(<Jim><Mark>).", "rdf-turtle");
+        assertDetection("<#Bob> <#:brothers> (<#Jim> <#Mark>).", "rdf-nt");
     }
 
     @Test
@@ -666,6 +679,7 @@ public class Any23Test extends Any23OnlineTestBase {
                 tripleHandler);
         tripleHandler.close();
         String result = out.toString("us-ascii");
+        logger.debug("result: \n-------------\n {} \n-------------\n", result);
         Assert.assertNotNull(result);
         Assert.assertTrue(result.length() > 10);
     }
